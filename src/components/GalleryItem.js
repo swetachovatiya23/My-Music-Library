@@ -14,7 +14,7 @@ function GalleryItem(props){
                 'position': 'relative'
             }}>
                 <Link to={`/album/${props.item.artistId}`}> Album </Link>
-                <Link to={`/artist/${props.item.collectionId}`}>Artist</Link>
+                <Link to={`/artist/${props.item.artistId}`}>Artist</Link>
                 <h3>{props.item.trackName}</h3>
                 <h4>{props.item.collectionName}</h4>
             </div>
