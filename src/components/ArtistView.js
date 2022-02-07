@@ -1,52 +1,56 @@
 // These components will be making separate API calls from the app
 // component to serve specific data about our artist
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
+
 
 const ArtistView = () => {
-    const { id } = useParams()
-    const [artistData, setArtistData] = useState([])
-    const history = useNavigate()
-    const justAlbums = artistData.map(entry => {
-        return [entry.collectionId, entry.collectionName]
-    })
-    console.log(justAlbums)
+    const { artist } = useParams()
+    const [ artistData, setArtistData ] = useState([])
+    const navigate = useNavigate();
+    
     useEffect(() => {
-        const API_URL = `https://itunes.apple.com/lookup?id=${id}&entity=song`
+        const API_URL = `https://itunes.apple.com/lookup?id=${artist}&entity=song`
         const fetchData = async () => {
             const response = await fetch(API_URL)
             const resData = await response.json()
-            console.log(resData)
             setArtistData(resData.results)
         }
         fetchData()
-    }, [id])
+    },[artist])
 
-    const renderAlbums = justAlbums.map(function (album, i) {
-        console.log(album)
+    let seen_albums = []
+    let add = false
+    const justAlbums = artistData.filter(entry => {
+        add = !(entry.collection in seen_albums)
+        seen_albums.push(entry.collectionId)
+        return add
+    })
+    const renderAlbums = justAlbums.map((album, i) => {
         return (
             <div key={i}>
-                <p>{album[1]}</p>
+                <Link to={`/album/${artist}/${album.collectionId}`}>
+                    <p>{album.collectionName}</p>
+                </Link>
             </div>
         )
     })
 
-    const testSomething = () => {
-        return (
+    const navButtons = () => {
+        return(
             <div>
-                <button onClick={() => history(-1)}>Go back</button>
-                <button onClick={() => history('/')}>Home</button>
+                <button onClick={() => navigate(-1)}>Back</button>
+                <button onClick={() => navigate('/')}>Home</button>
             </div>
         )
     }
-    console.log(testSomething)
+
     return (
         <div>
-            <h2>The id passed was: {id}</h2>
-            <p>Artist Data Goes Here!</p>
+            <h2>The id passed was: {artist}</h2>
+            {artistData.length > 0 ? <h2>{artistData[0].artistName}</h2> : <h2>Loading...</h2>}
+            {navButtons()}
             {renderAlbums}
-            {testSomething()}
         </div>
     )
 }

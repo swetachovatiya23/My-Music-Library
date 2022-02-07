@@ -1,23 +1,23 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 const AlbumView = () => {
-    const { id } = useParams()
-    const [albumData, setAlbumData] = useState([])
-    const justSongs = albumData.map(entry => entry.collectionName === 'song')
-    // console.log(justSongs)
-    
+    const { artist, id } = useParams()
+    const [ artistData, setArtistData ] = useState([])
+    const navigate = useNavigate();
+
     useEffect(() => {
+        const API_URL = `https://itunes.apple.com/lookup?id=${artist}&entity=song`
         const fetchData = async () => {
-            const API_URL = `https://itunes.apple.com/lookup?id=${id}&entity=song`
             const response = await fetch(API_URL)
             const resData = await response.json()
-            console.log(resData)
-            setAlbumData(resData.results)
+            setArtistData(resData.results)
         }
         fetchData()
-    }, [id])
+    }, [artist, id])
 
+    const albumData = artistData.filter(entry => entry.collectionId == id)
+    const justSongs = albumData.filter(entry => entry.kind === 'song')
 
     const renderSongs = justSongs.map((song, i) => {
         return (
@@ -27,8 +27,18 @@ const AlbumView = () => {
         )
     })
 
+    const navButtons = () => {
+        return(
+            <div>
+                <button onClick={() => navigate(-1)}>Back</button>
+                <button onClick={() => navigate('/')}>Home</button>
+            </div>
+        )
+    }
+
     return (
         <div>
+            {navButtons()}
             {renderSongs}
         </div>
     )

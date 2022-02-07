@@ -46,10 +46,10 @@ function App() {
               <Gallery data={data} />
             </div>
           }/>
-          <Route path="/album/:id" element={
+          <Route path="/album/:artist/:id" element={
             <AlbumView/>
           }/>
-          <Route path="/artist/:id" element={
+          <Route path="/artist/:artist" element={
             <ArtistView/>
           }/>
         </Routes>
