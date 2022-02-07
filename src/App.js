@@ -15,6 +15,8 @@ function App() {
   useEffect(() => {
     if (searchTerm) {
       document.title=`${searchTerm} Music`
+
+      //getting link
       const fetchData = async () => {
         const response = await fetch(`https://itunes.apple.com/search?term=${searchTerm}`)
         const resData = await response.json()
